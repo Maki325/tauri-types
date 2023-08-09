@@ -1,7 +1,7 @@
 use quote::ToTokens;
 use syn::{
   parse::{Parse, ParseStream},
-  Fields, Item, ItemStruct, Type,
+  Fields, Item, Type,
 };
 
 use crate::file::export_ts;
@@ -56,7 +56,6 @@ pub struct Ty {
 }
 
 impl Parse for Ty {
-  // Only support externaly tagged enums for now
   fn parse(input: ParseStream) -> syn::Result<Self> {
     let item: Item = input.parse()?;
     // Enum
@@ -100,6 +99,8 @@ impl Parse for Ty {
           }
         }
       }
+
+      // Only support externaly tagged enums for now
       Item::Enum(e) => {
         string.push_str(&e.ident.to_string());
         string.push_str(" = ");
@@ -129,23 +130,7 @@ impl Parse for Ty {
       _ => unimplemented!("Unsupported Type"),
     }
 
-    println!("{}", string);
     export_ts(&string)?;
-
-    // match &item {
-    //   Type::Path(path) => {
-    //     path.
-    //     // return rust_type_to_js(&path.path.to_token_stream().to_string()).to_string();
-    //   }
-    //   Type::Array(array) => {
-    //     // return [&type_to_string(&array.elem), "[]"].join("");
-    //   }
-    //   Type::Slice(slice) => {
-    //     // return [&type_to_string(&slice.elem), "[]"].join("");
-    //   }
-    //   // Type::Never(_) => "never".to_string(),
-    //   _ => unimplemented!("Unsupported Type"),
-    // }
 
     Ok(Ty { item })
   }

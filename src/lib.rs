@@ -19,10 +19,9 @@ pub fn command(_args: TokenStream, s: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(TauriType)]
 pub fn ty(s: TokenStream) -> TokenStream {
-  let ty = parse_macro_input!(s as Ty);
+  parse_macro_input!(s as Ty);
 
   TokenStream::new()
-  // ty.item.into_token_stream().into()
 }
 
 #[proc_macro]
