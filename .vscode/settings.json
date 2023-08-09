@@ -3,8 +3,5 @@
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "prettier.tabWidth": 2,
-  "rust-analyzer.linkedProjects": [
-    "./Cargo.toml",
-    "./tauri-types-test/Cargo.toml"
-  ]
+  "rust-analyzer.linkedProjects": ["./Cargo.toml"]
 }
