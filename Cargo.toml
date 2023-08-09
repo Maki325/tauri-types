@@ -1,13 +1,13 @@
 [package]
 name = "tauri-types"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
+description = "Type generating macros for Tauri apps"
+repository = "https://github.com/Maki325/tauri-types"
+homepage = "https://github.com/Maki325/tauri-types"
 
 [lib]
 proc-macro = true
-
-[workspace]
-members = ["tauri-types-test"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
