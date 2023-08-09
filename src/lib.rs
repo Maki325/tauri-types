@@ -1,14 +1,36 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+mod command;
+mod file;
+mod invoke;
+mod ty;
+
+use command::Command;
+use invoke::Invoke;
+use proc_macro::TokenStream;
+use quote::{quote, ToTokens};
+use syn::parse_macro_input;
+use ty::Ty;
+
+#[proc_macro_attribute]
+pub fn command(_args: TokenStream, s: TokenStream) -> TokenStream {
+  let cmd = parse_macro_input!(s as Command);
+
+  cmd.item.into_token_stream().into()
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[proc_macro_derive(TauriType)]
+pub fn ty(s: TokenStream) -> TokenStream {
+  let ty = parse_macro_input!(s as Ty);
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+  TokenStream::new()
+  // ty.item.into_token_stream().into()
+}
+
+#[proc_macro]
+pub fn generate_invoke(s: TokenStream) -> TokenStream {
+  let Invoke { item } = parse_macro_input!(s as Invoke);
+
+  quote! {
+    tauri::generate_handler![#item]
+  }
+  .into()
 }
