@@ -1,7 +1,6 @@
 use std::{fs::File, io::Write};
 
-// static PATH: &'static str = "../src/tauri-types.ts";
-static PATH: &'static str = "./tauri-types.ts";
+static PATH: &'static str = "../src/tauri-types.ts";
 
 static mut FILE: Option<File> = None;
 
