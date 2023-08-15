@@ -1,7 +1,8 @@
 [package]
 name = "tauri-types"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
+authors = ["Maki325"]
 description = "Type generating macros for Tauri apps"
 repository = "https://github.com/Maki325/tauri-types"
 homepage = "https://github.com/Maki325/tauri-types"
