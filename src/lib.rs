@@ -17,7 +17,7 @@ pub fn command(_args: TokenStream, s: TokenStream) -> TokenStream {
   cmd.item.into_token_stream().into()
 }
 
-#[proc_macro_derive(TauriType)]
+#[proc_macro_derive(TauriType, attributes(namespace))]
 pub fn ty(s: TokenStream) -> TokenStream {
   parse_macro_input!(s as Ty);
 
