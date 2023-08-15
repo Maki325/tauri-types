@@ -54,10 +54,14 @@ impl Parse for Invoke {
     string.push_str(
       "import { invoke as tauriInvoke } from '@tauri-apps/api/tauri';
 
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};
+
 export async function invoke<K extends Keys>(
   cmd: K,
-  args: FunctionArgs<K>
-): Promise<FunctionRet<K>> {
+  args: Prettify<FunctionArgs<K>>
+): Promise<Prettify<FunctionRet<K>>> {
   return tauriInvoke(cmd, args);
 }",
     );
