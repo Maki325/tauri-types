@@ -5,7 +5,7 @@ A small library that translates the types from `Rust` to `TypeScript` for better
 ### Check it out on:
   - [Crates.io](https://crates.io/crates/tauri-types)
   - [GitHub](https://github.com/Maki325/tauri-types)
-  - [Discord](https://discord.gg/VUawTUjCaB)
+  - [Discord](discord.maki325.me?from=tauri-types-github)
 
 ### Usage
 
