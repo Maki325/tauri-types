@@ -46,11 +46,26 @@ pub fn type_to_string(ty: &Type) -> String {
       return [&type_to_string(&slice.elem), "[]"].join("");
     }
     Type::Never(_) => "never".to_string(),
+    Type::Tuple(t) => {
+      let mut type_str = "[".to_string();
+      let mut is_first = true;
+      for t in &t.elems {
+        if !is_first {
+          type_str.push(',');
+        } else {
+          is_first = false;
+        }
+        type_str.push_str(&type_to_string(t));
+      }
+      type_str.push(']');
+      return type_str;
+    }
     _ => unimplemented!("Unsupported Type"),
   }
 }
 
 pub struct Ty {
+  #[allow(unused)]
   pub item: Item,
 }
 
@@ -77,6 +92,23 @@ fn segments_to_string(segments: &Punctuated<PathSegment, Token![::]>) -> String 
         if let Some(arg) = arg.args.iter().next() {
           if let GenericArgument::Type(ty) = arg {
             return [type_to_string(ty), "[]".to_string()].join("");
+          }
+        }
+      }
+    } else if segment.ident.to_string().eq("Option") {
+      if let PathArguments::AngleBracketed(arg) = &segment.arguments {
+        if let Some(arg) = arg.args.iter().next() {
+          if let GenericArgument::Type(ty) = arg {
+            return [type_to_string(ty), " | null".to_string()].join("");
+          }
+        }
+      }
+    } else if segment.ident.to_string().eq("Result") {
+      if let PathArguments::AngleBracketed(arg) = &segment.arguments {
+        let mut iter = arg.args.iter();
+        if let Some(arg) = iter.next() {
+          if let GenericArgument::Type(ty) = arg {
+            return type_to_string(ty);
           }
         }
       }

@@ -5,7 +5,7 @@ static PATH: &'static str = "../src/tauri-types.ts";
 static mut FILE: Option<File> = None;
 
 pub fn export_ts(string: &String) -> syn::Result<()> {
-  let mut file = match unsafe { &FILE } {
+  let file = match unsafe { &mut *&raw mut FILE } {
     Some(file) => file,
     None => {
       let file = match File::create(PATH) {
@@ -17,7 +17,7 @@ pub fn export_ts(string: &String) -> syn::Result<()> {
         FILE = Some(file);
       }
 
-      match unsafe { &FILE } {
+      match unsafe { &mut *&raw mut FILE } {
         Some(file) => file,
         _ => panic!("Couldn't get tauri-types.ts"),
       }

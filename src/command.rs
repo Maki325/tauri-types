@@ -42,44 +42,61 @@ impl Parse for Command {
     if inputs.len() == 0 {
       string.push_str("_args = undefined;\n");
     } else {
-      string.push_str("_args = {\n");
+      let mut args_string = String::new();
 
       for input in inputs {
-        string.push_str("  ");
         let PatType { pat, ty, attrs, .. } = match input {
           syn::FnArg::Typed(input) => input,
           _ => panic!("unexpected fn arg"),
         };
 
+        let path = get_string_attribute_value(attrs, "path")?;
+
+        let type_str = if let Some((path, index)) = path {
+          attrs.remove(index);
+          path
+        } else {
+          type_to_string(ty)
+        };
+
+        if &type_str == "tauri.State" {
+          // Skipping the "tauri.State" type, as it's an injection from Tauri
+          continue;
+        }
+
+        args_string.push_str("  ");
+
         match &**pat {
           Pat::Ident(ident) => {
-            string.push_str(&ident.ident.to_string());
+            args_string.push_str(&ident.ident.to_string());
           }
           Pat::Struct(s) => {
             let last = s.path.segments.last().unwrap().ident.to_string();
-            string.push_str(&lowercase(last));
+            args_string.push_str(&lowercase(last));
           }
           Pat::TupleStruct(ts) => {
             let last = ts.path.segments.last().unwrap().ident.to_string();
-            string.push_str(&lowercase(last));
+            args_string.push_str(&lowercase(last));
+          }
+          Pat::Tuple(_ts) => {
+            args_string.push_str("unknown");
           }
           _ => unimplemented!("Unsupported pattern type"),
         }
-        string.push_str(": ");
+        args_string.push_str(": ");
 
-        let path = get_string_attribute_value(attrs, "path")?;
+        args_string.push_str(&type_str);
 
-        if let Some((path, index)) = path {
-          string.push_str(&path);
-          attrs.remove(index);
-        } else {
-          string.push_str(&type_to_string(ty));
-        }
-
-        string.push_str(";\n");
+        args_string.push_str(";\n");
       }
 
-      string.push_str("};\n");
+      if !args_string.is_empty() {
+        string.push_str("_args = {\n");
+        string.push_str(&args_string);
+        string.push_str("};\n");
+      } else {
+        string.push_str("_args = undefined;\n");
+      }
     }
 
     string.push_str("export type ");

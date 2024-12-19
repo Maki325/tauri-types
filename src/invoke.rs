@@ -1,15 +1,14 @@
-use proc_macro2::Ident;
-use syn::{parse::Parse, punctuated::Punctuated, Token};
+use syn::{parse::Parse, punctuated::Punctuated, Path, Token};
 
 use crate::file::export_ts;
 
 pub struct Invoke {
-  pub item: Punctuated<Ident, Token![,]>,
+  pub item: Punctuated<Path, Token![,]>,
 }
 
-fn create_function_data(string: &mut String, item: &Punctuated<Ident, Token![,]>, ext: &str) {
+fn create_function_data(string: &mut String, item: &Punctuated<Path, Token![,]>, ext: &str) {
   for ident in item {
-    let str = ident.to_string();
+    let str = &ident.segments.last().unwrap().ident.to_string();
     string.push_str("K extends '");
     string.push_str(&str);
     string.push_str("\'\n  ? ");
@@ -22,7 +21,7 @@ fn create_function_data(string: &mut String, item: &Punctuated<Ident, Token![,]>
 
 impl Parse for Invoke {
   fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-    let item: Punctuated<Ident, Token![,]> = Punctuated::parse_terminated(input)?;
+    let item: Punctuated<Path, Token![,]> = Punctuated::parse_terminated(input)?;
 
     if item.len() == 0 {
       return Ok(Invoke { item });
@@ -34,6 +33,7 @@ impl Parse for Invoke {
 
     let mut is_first = true;
     for ident in &item {
+      let ident = &ident.segments.last().unwrap().ident;
       if !is_first {
         string.push_str(" | ");
       }
@@ -52,7 +52,7 @@ impl Parse for Invoke {
     string.push('\n');
 
     string.push_str(
-      "import { invoke as tauriInvoke } from '@tauri-apps/api/tauri';
+      "import { invoke as tauriInvoke } from '@tauri-apps/api/core';
 
 type Prettify<T> = {
   [K in keyof T]: T[K];
