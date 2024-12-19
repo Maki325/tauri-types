@@ -8,6 +8,7 @@ repository = "https://github.com/Maki325/tauri-types"
 homepage = "https://github.com/Maki325/tauri-types"
 license = "Apache-2.0 OR MIT"
 keywords = ["tauri", "tauri-app", "tauri-types", "tauri-type-macros"]
+exclude = [".vscode/*"]
 
 [lib]
 proc-macro = true
